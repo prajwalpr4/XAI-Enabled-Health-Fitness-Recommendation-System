@@ -1,0 +1,11 @@
+Flask==3.0.0
+Werkzeug==3.0.1
+kaggle==1.7.4.5
+pandas==2.3.3
+shap==0.49.1
+scikit-learn==1.7.2
+matplotlib==3.10.7
+google-generativeai==0.3.2
+python-dotenv==1.0.0
+firebase-admin==6.2.0
+cryptography==41.0.7

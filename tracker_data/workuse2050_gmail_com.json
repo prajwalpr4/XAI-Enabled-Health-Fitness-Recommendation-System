@@ -1,0 +1,57 @@
+{
+  "2025-11-24": {
+    "steps": 3600,
+    "water_ml": 250,
+    "sleep_hours": 7.5,
+    "meals_completed": [
+      "breakfast",
+      "dinner",
+      "lunch"
+    ],
+    "exercises_completed": [
+      "Monday_shoulder_press",
+      "Monday_bench_press",
+      "Monday_push_ups"
+    ],
+    "diet_replacements": {},
+    "notes": "",
+    "created_at": "2025-11-24T10:27:13.097398"
+  },
+  "2025-11-25": {
+    "steps": 10933,
+    "water_ml": 2500,
+    "sleep_hours": 7.5,
+    "meals_completed": [
+      "breakfast",
+      "dinner",
+      "lunch"
+    ],
+    "exercises_completed": [
+      "Tuesday_running",
+      "Tuesday_planks"
+    ],
+    "diet_replacements": {},
+    "notes": "",
+    "created_at": "2025-11-25T10:58:20.134088"
+  },
+  "2025-11-27": {
+    "steps": 1000,
+    "water_ml": 0,
+    "sleep_hours": 0,
+    "meals_completed": [],
+    "exercises_completed": [],
+    "diet_replacements": {},
+    "notes": "",
+    "created_at": "2025-11-27T15:39:58.269439"
+  },
+  "2025-11-28": {
+    "steps": 0,
+    "water_ml": 0,
+    "sleep_hours": 0,
+    "meals_completed": [],
+    "exercises_completed": [],
+    "diet_replacements": {},
+    "notes": "",
+    "created_at": "2025-11-28T18:39:22.107452"
+  }
+}

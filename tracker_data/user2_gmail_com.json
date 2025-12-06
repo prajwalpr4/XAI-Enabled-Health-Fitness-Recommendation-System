@@ -1,0 +1,16 @@
+{
+  "2025-11-23": {
+    "steps": 2800,
+    "water_ml": 4250,
+    "meals_completed": [
+      "breakfast",
+      "dinner",
+      "lunch"
+    ],
+    "exercises_completed": [],
+    "diet_replacements": {},
+    "notes": "",
+    "created_at": "2025-11-23T17:36:08.123087",
+    "sleep_hours": 10
+  }
+}

@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Health & Fitness</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 0;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: auto 1fr;
+        }
+        
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 30px 20px;
+            color: white;
+            border-right: 2px solid rgba(255, 255, 255, 0.2);
+            overflow-y: auto;
+            z-index: 1000;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar.open {
+            transform: translateX(0);
+        }
+        
+        .sidebar-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+            pointer-events: auto;
+            padding: 0;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .sidebar-toggle:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .sidebar-toggle:active {
+            transform: scale(0.95);
+        }
+        
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
+        }
+        
+        .sidebar-overlay.show {
+            display: block;
+        }
+        
+        .sidebar h2 {
+            font-size: 1.3em;
+            margin-bottom: 30px;
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .sidebar-nav a {
+            color: white;
+            text-decoration: none;
+            padding: 12px 15px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .sidebar-nav a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .sidebar-nav a.dashboard { background: rgba(72, 198, 239, 0.3); }
+        .sidebar-nav a.tracker { background: rgba(40, 167, 69, 0.3); }
+        .sidebar-nav a.recommendations { background: rgba(255, 193, 7, 0.3); }
+        .sidebar-nav a.profile { background: rgba(255, 255, 255, 0.1); }
+        .sidebar-nav a.logout { background: rgba(255, 68, 68, 0.2); }
+        
+        .sidebar-user {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .sidebar-user p {
+            margin: 0;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        .sidebar-user strong {
+            display: block;
+            font-size: 1.1em;
+            margin-top: 5px;
+        }
+        
+        .main-content {
+            grid-column: 1;
+            grid-row: 1 / -1;
+            padding: 20px;
+            overflow-y: auto;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin-left: 0;
+            transition: margin-left 0.3s ease;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Header Section */
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            margin-top: 20px;
+            background: linear-gradient(135deg, #4a5cc4 0%, #5a2e7f 100%);
+            padding: 35px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(74, 92, 196, 0.4);
+        }
+        
+        .greeting {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .greeting-text h1 {
+            font-size: 28px;
+            color: white;
+            margin-bottom: 8px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        
+        .greeting-text p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+        
+        .date-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px 30px;
+            border-radius: 15px;
+            color: white;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .date-card .day {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+        
+        .date-card .month-year {
+            font-size: 14px;
+            opacity: 0.95;
+            font-weight: 500;
+        }
+        
+        /* Navigation Menu */
+        .nav-menu {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-btn {
+            background: white;
+            color: #667eea;
+            padding: 12px 25px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .nav-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        /* Daily Activity Section */
+        .section-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+        }
+        
+        .activity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+        
+        .activity-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .activity-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        
+        .activity-card.clickable {
+            cursor: pointer;
+        }
+        
+        .activity-card.clickable:active {
+            transform: translateY(-3px);
+        }
+        
+        .activity-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        .activity-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+        
+        .circular-progress {
+            transform: rotate(-90deg);
+        }
+        
+        .progress-bg {
+            fill: none;
+            stroke: #e0e0e0;
+            stroke-width: 8;
+        }
+        
+        .progress-bar {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease;
+        }
+        
+        .progress-bar.steps {
+            stroke: url(#gradient-steps);
+        }
+        
+        .progress-bar.calories {
+            stroke: url(#gradient-calories);
+        }
+        
+        .progress-bar.water {
+            stroke: url(#gradient-water);
+        }
+        
+        .progress-bar.sleep {
+            stroke: url(#gradient-sleep);
+        }
+        
+        .icon-emoji {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 40px;
+        }
+        
+        .activity-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .activity-label {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .activity-goal {
+            color: #999;
+            font-size: 12px;
+        }
+        
+        /* Weekly Tracker Chart */
+        .chart-container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            height: 350px;
+            position: relative;
+        }
+        
+        .chart-title {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .line-chart {
+            width: 100%;
+            height: 320px;
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .chart-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 1;
+        }
+        
+        .grid-line {
+            width: 100%;
+            height: 1px;
+            background: #f0f0f0;
+            position: relative;
+        }
+        
+        .grid-label {
+            position: absolute;
+            left: -40px;
+            top: -8px;
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .chart-bars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 250px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            padding: 0 20px;
+            z-index: 2;
+            gap: 10px;
+        }
+        
+        .bar-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            position: relative;
+            max-width: 80px;
+            height: 100%;
+            min-height: 0;
+        }
+        
+        .bar {
+            width: 50px;
+            background: linear-gradient(180deg, #48c6ef 0%, #6f86d6 100%);
+            border-radius: 10px 10px 0 0;
+            position: relative;
+            transition: all 0.5s ease;
+            cursor: pointer;
+            min-height: 5px;
+            flex-shrink: 0;
+        }
+        
+        .bar:hover {
+            opacity: 0.8;
+            transform: scaleY(1.05);
+        }
+        
+        .bar-value {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #667eea;
+            white-space: nowrap;
+            z-index: 10;
+        }
+        
+        .bar-label {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 8px;
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .quick-action-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .quick-action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .quick-action-btn.secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .quick-action-btn.success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .stat-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        /* Loading Animation */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-section {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .activity-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .greeting-text h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Toggle Button -->
+    <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+    
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+    
+    <!-- Sidebar Navigation -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-user">
+            <p>Welcome,</p>
+            <strong id="user-name">User</strong>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/dashboard" class="dashboard">📊 Dashboard</a>
+            <a href="/tracker" class="tracker">📝 Tracker</a>
+            <a href="/" class="recommendations">🏠 Recommendations</a>
+            <a href="/profile" class="profile">👤 Profile</a>
+            <a href="/logout" class="logout">🚪 Logout</a>
+        </nav>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <!-- Header Section -->
+            <div class="header-section">
+            <div class="greeting">
+                <div class="user-avatar" id="user-avatar">U</div>
+                <div class="greeting-text">
+                    <h1 id="greeting-message">Good Morning</h1>
+                    <p id="user-name-display">Loading...</p>
+                </div>
+            </div>
+            <div class="date-card">
+                <div class="day" id="current-day">01</div>
+                <div class="month-year" id="current-month-year">January 2024</div>
+            </div>
+        </div>
+        
+        <!-- Navigation Menu -->
+        <div class="nav-menu">
+            <a href="/dashboard" class="nav-btn active" style="padding: 18px 50px; font-size: 20px; font-weight: 800; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4); transform: scale(1.05);">📊 Dashboard</a>
+        </div>
+        
+        <!-- Daily Activity Section -->
+        <div class="section-card">
+            <h2 class="section-title">Daily Activity</h2>
+            <div class="activity-grid">
+                <!-- Steps Card -->
+                <div class="activity-card">
+                    <div class="activity-icon">
+                        <svg class="circular-progress" width="100" height="100">
+                            <defs>
+                                <linearGradient id="gradient-steps" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="progress-bg" cx="50" cy="50" r="40"></circle>
+                            <circle class="progress-bar steps" cx="50" cy="50" r="40" 
+                                    id="steps-progress-circle"
+                                    stroke-dasharray="251.2" 
+                                    stroke-dashoffset="251.2"></circle>
+                        </svg>
+                        <div class="icon-emoji">🚶</div>
+                    </div>
+                    <div class="activity-value" id="steps-value">0</div>
+                    <div class="activity-label">Steps Completed</div>
+                    <div class="activity-goal">Goal: <span id="steps-goal">10,000</span></div>
+                </div>
+                
+                <!-- Calories Card -->
+                <div class="activity-card">
+                    <div class="activity-icon">
+                        <svg class="circular-progress" width="100" height="100">
+                            <defs>
+                                <linearGradient id="gradient-calories" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#f093fb;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#f5576c;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="progress-bg" cx="50" cy="50" r="40"></circle>
+                            <circle class="progress-bar calories" cx="50" cy="50" r="40"
+                                    id="calories-progress-circle"
+                                    stroke-dasharray="251.2" 
+                                    stroke-dashoffset="251.2"></circle>
+                        </svg>
+                        <div class="icon-emoji">🔥</div>
+                    </div>
+                    <div class="activity-value" id="calories-value">0</div>
+                    <div class="activity-label">Calories Burned</div>
+                    <div class="activity-goal">Goal: <span id="calories-goal">2000</span></div>
+                </div>
+                
+                <!-- Water Card -->
+                <div class="activity-card">
+                    <div class="activity-icon">
+                        <svg class="circular-progress" width="100" height="100">
+                            <defs>
+                                <linearGradient id="gradient-water" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#4facfe;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#00f2fe;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="progress-bg" cx="50" cy="50" r="40"></circle>
+                            <circle class="progress-bar water" cx="50" cy="50" r="40"
+                                    id="water-progress-circle"
+                                    stroke-dasharray="251.2" 
+                                    stroke-dashoffset="251.2"></circle>
+                        </svg>
+                        <div class="icon-emoji">💧</div>
+                    </div>
+                    <div class="activity-value" id="water-value">0</div>
+                    <div class="activity-label">Water Intake (ml)</div>
+                    <div class="activity-goal">Goal: <span id="water-goal">2000</span> ml</div>
+                </div>
+                
+                <!-- Sleep Card -->
+                <div class="activity-card clickable" onclick="goToSleepQuality()">
+                    <div class="activity-icon">
+                        <svg class="circular-progress" width="100" height="100">
+                            <defs>
+                                <linearGradient id="gradient-sleep" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#a8edea;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#fed6e3;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="progress-bg" cx="50" cy="50" r="40"></circle>
+                            <circle class="progress-bar sleep" cx="50" cy="50" r="40"
+                                    id="sleep-progress-circle"
+                                    stroke-dasharray="251.2" 
+                                    stroke-dashoffset="251.2"></circle>
+                        </svg>
+                        <div class="icon-emoji">😴</div>
+                    </div>
+                    <div class="activity-value" id="sleep-value">0</div>
+                    <div class="activity-label">Sleep Hours</div>
+                    <div class="activity-goal">Goal: <span id="sleep-goal">8</span> hrs</div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <button class="quick-action-btn" onclick="quickAddSteps()">
+                    ➕ Add Steps
+                </button>
+                <button class="quick-action-btn secondary" onclick="quickAddWater()">
+                    💧 Add Water
+                </button>
+                <button class="quick-action-btn" onclick="quickAddSleep()" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+                    😴 Add Sleep
+                </button>
+                <button class="quick-action-btn success" onclick="window.location.href='/tracker'">
+                    📝 Open Tracker
+                </button>
+            </div>
+        </div>
+        
+        <!-- Weekly Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📈</div>
+                <div class="stat-value" id="avg-steps">0</div>
+                <div class="stat-label">Avg Steps/Day</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💪</div>
+                <div class="stat-value" id="total-exercises">0</div>
+                <div class="stat-label">Exercises Completed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">😴</div>
+                <div class="stat-value" id="sleep-hours">8.0</div>
+                <div class="stat-label">Sleep Cycle (hrs)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🔥</div>
+                <div class="stat-value" id="streak-days">0</div>
+                <div class="stat-label">Day Streak</div>
+            </div>
+        </div>
+        
+        <!-- Weekly Tracker Section -->
+        <div class="section-card">
+            <h2 class="section-title">Weekly Tracker</h2>
+            <div class="chart-container">
+                <div class="chart-title">Weekly Steps</div>
+                <div class="line-chart">
+                    <div class="chart-grid">
+                        <div class="grid-line"><span class="grid-label">10K</span></div>
+                        <div class="grid-line"><span class="grid-label">7.5K</span></div>
+                        <div class="grid-line"><span class="grid-label">5K</span></div>
+                        <div class="grid-line"><span class="grid-label">2.5K</span></div>
+                        <div class="grid-line"><span class="grid-label">0</span></div>
+                    </div>
+                    <div class="chart-bars" id="chart-bars">
+                        <!-- Bars will be generated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Loading Indicator -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Loading your data...</p>
+        </div>
+    </div>
+    
+    <script>
+        // Sidebar toggle functions
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+        }
+        
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.remove('open');
+            overlay.classList.remove('show');
+        }
+        
+        // Close sidebar when clicking on a link
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarLinks = document.querySelectorAll('.sidebar-nav a');
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', closeSidebar);
+            });
+        });
+        
+        let userData = null;
+        let trackerData = null;
+        
+        // Initialize dashboard
+        window.addEventListener('load', () => {
+            updateDateTime();
+            setInterval(updateDateTime, 60000); // Update every minute
+            loadDashboardData();
+        });
+        
+        function updateDateTime() {
+            const now = new Date();
+            const hours = now.getHours();
+            
+            // Update greeting
+            let greeting = 'Good Morning';
+            if (hours >= 12 && hours < 17) greeting = 'Good Afternoon';
+            else if (hours >= 17) greeting = 'Good Evening';
+            document.getElementById('greeting-message').textContent = greeting;
+            
+            // Update date
+            const day = now.getDate();
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                               'July', 'August', 'September', 'October', 'November', 'December'];
+            const month = monthNames[now.getMonth()];
+            const year = now.getFullYear();
+            
+            document.getElementById('current-day').textContent = day.toString().padStart(2, '0');
+            document.getElementById('current-month-year').textContent = `${month} ${year}`;
+        }
+        
+        async function loadDashboardData() {
+            document.getElementById('loading').classList.add('show');
+            
+            try {
+                // Load profile data first
+                const profileResponse = await fetch('/api/load-profile-data');
+                const profileResult = await profileResponse.json();
+                
+                if (profileResult.success && profileResult.profile) {
+                    userData = profileResult.profile;
+                    console.log('Profile loaded:', userData);
+                } else {
+                    console.log('No profile data found');
+                }
+                
+                // Load tracker data
+                const trackerResponse = await fetch('/tracker/today');
+                const trackerResult = await trackerResponse.json();
+                
+                if (trackerResult.success) {
+                    trackerData = trackerResult.data;
+                    updateDailyActivity(trackerResult.stats);
+                }
+                
+                // Load weekly data
+                const weeklyResponse = await fetch('/tracker/weekly');
+                const weeklyResult = await weeklyResponse.json();
+                
+                if (weeklyResult.success) {
+                    updateWeeklyChart(weeklyResult.data);
+                    updateWeeklyStats(weeklyResult.data);
+                }
+                
+                // Get user name
+                const response = await fetch('/get_user_info');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        const userName = data.name || 'User';
+                        document.getElementById('user-name-display').textContent = userName;
+                        document.getElementById('user-avatar').textContent = userName.charAt(0).toUpperCase();
+                        // Also update sidebar user name
+                        const sidebarUserName = document.getElementById('user-name');
+                        if (sidebarUserName) {
+                            sidebarUserName.textContent = userName;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            } finally {
+                document.getElementById('loading').classList.remove('show');
+            }
+        }
+        
+        function updateDailyActivity(stats) {
+            // Update steps
+            document.getElementById('steps-value').textContent = stats.today.steps.toLocaleString();
+            updateCircularProgress('steps-progress-circle', stats.today.steps_progress);
+            
+            // Calculate calories (estimate: 0.04 calories per step)
+            const calories = Math.round(stats.today.steps * 0.04);
+            const caloriesGoal = 2000;
+            const caloriesProgress = Math.min(100, (calories / caloriesGoal) * 100);
+            document.getElementById('calories-value').textContent = calories.toLocaleString();
+            updateCircularProgress('calories-progress-circle', caloriesProgress);
+            
+            // Update water
+            document.getElementById('water-value').textContent = stats.today.water_ml.toLocaleString();
+            updateCircularProgress('water-progress-circle', stats.today.water_progress);
+            
+            // Update sleep
+            if (stats.today.sleep_hours !== undefined) {
+                document.getElementById('sleep-value').textContent = stats.today.sleep_hours;
+                const sleepGoal = 8;
+                const sleepProgress = Math.min(100, (stats.today.sleep_hours / sleepGoal) * 100);
+                updateCircularProgress('sleep-progress-circle', sleepProgress);
+            }
+        }
+        
+        function updateCircularProgress(elementId, percentage) {
+            const circle = document.getElementById(elementId);
+            const radius = 40;
+            const circumference = 2 * Math.PI * radius;
+            const offset = circumference - (percentage / 100) * circumference;
+            circle.style.strokeDashoffset = offset;
+        }
+        
+        function updateWeeklyChart(weeklyData) {
+            const chartBars = document.getElementById('chart-bars');
+            chartBars.innerHTML = '';
+            
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const maxSteps = 10000;
+            
+            // Display Monday to Sunday (data already in correct order from backend)
+            weeklyData.forEach((dayData, index) => {
+                const dayName = days[index]; // Use index directly since data is Monday-Sunday
+                const steps = parseInt(dayData.steps) || 0;
+                const height = Math.max(5, (steps / maxSteps) * 100);
+                
+                const barContainer = document.createElement('div');
+                barContainer.className = 'bar-container';
+                
+                const bar = document.createElement('div');
+                bar.className = 'bar';
+                bar.style.height = height + '%';
+                
+                const barValue = document.createElement('div');
+                barValue.className = 'bar-value';
+                barValue.textContent = steps > 0 ? steps.toLocaleString() : '0';
+                
+                const barLabel = document.createElement('div');
+                barLabel.className = 'bar-label';
+                barLabel.textContent = dayName;
+                
+                bar.appendChild(barValue);
+                barContainer.appendChild(bar);
+                barContainer.appendChild(barLabel);
+                chartBars.appendChild(barContainer);
+            });
+        }
+        
+        function updateWeeklyStats(weeklyData) {
+            // Calculate average steps
+            const totalSteps = weeklyData.reduce((sum, day) => sum + (day.steps || 0), 0);
+            const avgSteps = Math.round(totalSteps / weeklyData.length);
+            document.getElementById('avg-steps').textContent = avgSteps.toLocaleString();
+            
+            // Calculate total exercises
+            const totalExercises = weeklyData.reduce((sum, day) => 
+                sum + (day.exercises_completed ? day.exercises_completed.length : 0), 0);
+            document.getElementById('total-exercises').textContent = totalExercises;
+            
+            // Calculate average sleep
+            const totalSleep = weeklyData.reduce((sum, day) => sum + (day.sleep_hours || 0), 0);
+            const avgSleep = (totalSleep / weeklyData.length).toFixed(1);
+            document.getElementById('sleep-hours').textContent = avgSleep;
+            
+            // Calculate streak
+            let streak = 0;
+            for (let i = 0; i < weeklyData.length; i++) {
+                if (weeklyData[i].steps > 0 || 
+                    (weeklyData[i].meals_completed && weeklyData[i].meals_completed.length > 0)) {
+                    streak++;
+                } else {
+                    break;
+                }
+            }
+            document.getElementById('streak-days').textContent = streak;
+        }
+        
+        function updateActivityCardDirectly(type, stats) {
+            // Update activity card values directly without full page reload
+            const valueMap = {
+                'steps': 'steps-value',
+                'water': 'water-value',
+                'sleep': 'sleep-value',
+                'calories': 'calories-value'
+            };
+            
+            const progressMap = {
+                'steps': 'steps-progress-circle',
+                'water': 'water-progress-circle',
+                'sleep': 'sleep-progress-circle',
+                'calories': 'calories-progress-circle'
+            };
+            
+            const goalMap = {
+                'steps': 'steps-goal',
+                'water': 'water-goal',
+                'sleep': 'sleep-goal',
+                'calories': 'calories-goal'
+            };
+            
+            if (stats && stats[type] !== undefined) {
+                const valueElement = document.getElementById(valueMap[type]);
+                if (valueElement) {
+                    // Format the value with commas for large numbers
+                    const formattedValue = typeof stats[type] === 'number' && stats[type] > 999 
+                        ? stats[type].toLocaleString() 
+                        : stats[type];
+                    valueElement.textContent = formattedValue;
+                    
+                    // Add a subtle animation
+                    valueElement.style.transition = 'transform 0.3s ease';
+                    valueElement.style.transform = 'scale(1.1)';
+                    setTimeout(() => {
+                        valueElement.style.transform = 'scale(1)';
+                    }, 300);
+                }
+                
+                // Update progress circle if it exists
+                const progressElement = document.getElementById(progressMap[type]);
+                if (progressElement) {
+                    const goal = parseInt(document.getElementById(goalMap[type]).textContent.replace(/,/g, '')) || 1;
+                    const percentage = Math.min((stats[type] / goal) * 100, 100);
+                    const circumference = 251.2; // 2 * π * r where r = 40
+                    const offset = circumference - (percentage / 100) * circumference;
+                    progressElement.style.strokeDashoffset = offset;
+                }
+            }
+        }
+        
+        async function quickAddSteps() {
+            const steps = prompt('How many steps did you take?', '1000');
+            if (steps && !isNaN(steps)) {
+                const currentSteps = parseInt(document.getElementById('steps-value').textContent.replace(/,/g, '')) || 0;
+                const newSteps = currentSteps + parseInt(steps);
+                
+                try {
+                    const response = await fetch('/tracker/steps', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({steps: newSteps})
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        // Update UI directly without full reload
+                        updateActivityCardDirectly('steps', result.stats);
+                    }
+                } catch (error) {
+                    console.error('Error adding steps:', error);
+                }
+            }
+        }
+        
+        async function quickAddWater() {
+            const ml = prompt('How much water? (ml)', '250');
+            if (ml && !isNaN(ml)) {
+                try {
+                    const response = await fetch('/tracker/water', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ml: parseInt(ml)})
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        // Update UI directly without full reload
+                        updateActivityCardDirectly('water', result.stats);
+                    }
+                } catch (error) {
+                    console.error('Error adding water:', error);
+                }
+            }
+        }
+        
+        async function quickAddSleep() {
+            const hours = prompt('How many hours did you sleep?', '8');
+            if (hours && !isNaN(hours)) {
+                try {
+                    const response = await fetch('/tracker/sleep', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({hours: parseFloat(hours)})
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        // Update UI directly without full reload
+                        updateActivityCardDirectly('sleep', result.stats);
+                    }
+                } catch (error) {
+                    console.error('Error adding sleep:', error);
+                }
+            }
+        }
+        
+        function goToSleepQuality() {
+            // Navigate to recommendations page with sleep quality focus
+            window.location.href = '/?scroll=sleep';
+        }
+        
+        // Auto-refresh data every 5 seconds to sync with tracker
+        setInterval(() => {
+            loadDashboardData();
+        }, 5000);
+    </script>
+        </div>
+    </div>
+</body>
+</html>

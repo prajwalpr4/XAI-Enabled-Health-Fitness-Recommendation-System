@@ -1,0 +1,260 @@
+{
+  "push_ups": {
+    "type": "strength",
+    "muscle_groups": [
+      "chest",
+      "triceps",
+      "shoulders"
+    ],
+    "difficulty": "beginner",
+    "calories_per_min": 7,
+    "met": 3.8
+  },
+  "pull_ups": {
+    "type": "strength",
+    "muscle_groups": [
+      "back",
+      "biceps"
+    ],
+    "difficulty": "intermediate",
+    "calories_per_min": 8,
+    "met": 8.0
+  },
+  "squats": {
+    "type": "strength",
+    "muscle_groups": [
+      "legs",
+      "glutes"
+    ],
+    "difficulty": "beginner",
+    "calories_per_min": 8,
+    "met": 5.0
+  },
+  "deadlifts": {
+    "type": "strength",
+    "muscle_groups": [
+      "back",
+      "legs",
+      "core"
+    ],
+    "difficulty": "intermediate",
+    "calories_per_min": 9,
+    "met": 6.0
+  },
+  "bench_press": {
+    "type": "strength",
+    "muscle_groups": [
+      "chest",
+      "triceps",
+      "shoulders"
+    ],
+    "difficulty": "intermediate",
+    "calories_per_min": 7,
+    "met": 5.0
+  },
+  "shoulder_press": {
+    "type": "strength",
+    "muscle_groups": [
+      "shoulders",
+      "triceps"
+    ],
+    "difficulty": "beginner",
+    "calories_per_min": 6,
+    "met": 4.0
+  },
+  "lunges": {
+    "type": "strength",
+    "muscle_groups": [
+      "legs",
+      "glutes"
+    ],
+    "difficulty": "beginner",
+    "calories_per_min": 7,
+    "met": 4.0
+  },
+  "planks": {
+    "type": "strength",
+    "muscle_groups": [
+      "core"
+    ],
+    "difficulty": "beginner",
+    "calories_per_min": 4,
+    "met": 3.0
+  },
+  "dumbbell_curls": {
+    "type": "strength",
+    "muscle_groups": [
+      "biceps"
+    ],
+    "difficulty": "beginner",
+    "calories_per_min": 5,
+    "met": 3.5
+  },
+  "leg_press": {
+    "type": "strength",
+    "muscle_groups": [
+      "legs"
+    ],
+    "difficulty": "intermediate",
+    "calories_per_min": 8,
+    "met": 5.5
+  },
+  "running": {
+    "type": "cardio",
+    "muscle_groups": [
+      "legs",
+      "cardiovascular"
+    ],
+    "difficulty": "beginner",
+    "calories_per_min": 11,
+    "met": 9.0
+  },
+  "jogging": {
+    "type": "cardio",
+    "muscle_groups": [
+      "legs",
+      "cardiovascular"
+    ],
+    "difficulty": "beginner",
+    "calories_per_min": 7,
+    "met": 7.0
+  },
+  "cycling": {
+    "type": "cardio",
+    "muscle_groups": [
+      "legs",
+      "cardiovascular"
+    ],
+    "difficulty": "beginner",
+    "calories_per_min": 9,
+    "met": 8.0
+  },
+  "swimming": {
+    "type": "cardio",
+    "muscle_groups": [
+      "full_body",
+      "cardiovascular"
+    ],
+    "difficulty": "intermediate",
+    "calories_per_min": 10,
+    "met": 8.0
+  },
+  "jump_rope": {
+    "type": "cardio",
+    "muscle_groups": [
+      "legs",
+      "cardiovascular"
+    ],
+    "difficulty": "intermediate",
+    "calories_per_min": 12,
+    "met": 12.0
+  },
+  "rowing": {
+    "type": "cardio",
+    "muscle_groups": [
+      "back",
+      "legs",
+      "cardiovascular"
+    ],
+    "difficulty": "intermediate",
+    "calories_per_min": 10,
+    "met": 12.0
+  },
+  "elliptical": {
+    "type": "cardio",
+    "muscle_groups": [
+      "legs",
+      "cardiovascular"
+    ],
+    "difficulty": "beginner",
+    "calories_per_min": 8,
+    "met": 5.0
+  },
+  "walking": {
+    "type": "cardio",
+    "muscle_groups": [
+      "legs",
+      "cardiovascular"
+    ],
+    "difficulty": "beginner",
+    "calories_per_min": 4,
+    "met": 3.5
+  },
+  "hiking": {
+    "type": "cardio",
+    "muscle_groups": [
+      "legs",
+      "cardiovascular"
+    ],
+    "difficulty": "intermediate",
+    "calories_per_min": 6,
+    "met": 6.0
+  },
+  "stair_climbing": {
+    "type": "cardio",
+    "muscle_groups": [
+      "legs",
+      "cardiovascular"
+    ],
+    "difficulty": "intermediate",
+    "calories_per_min": 9,
+    "met": 8.0
+  },
+  "dancing": {
+    "type": "cardio",
+    "muscle_groups": [
+      "full_body",
+      "cardiovascular"
+    ],
+    "difficulty": "beginner",
+    "calories_per_min": 6,
+    "met": 4.5
+  },
+  "boxing": {
+    "type": "cardio",
+    "muscle_groups": [
+      "full_body",
+      "cardiovascular"
+    ],
+    "difficulty": "advanced",
+    "calories_per_min": 13,
+    "met": 12.0
+  },
+  "yoga": {
+    "type": "flexibility",
+    "muscle_groups": [
+      "full_body"
+    ],
+    "difficulty": "beginner",
+    "calories_per_min": 4,
+    "met": 2.5
+  },
+  "stretching": {
+    "type": "flexibility",
+    "muscle_groups": [
+      "full_body"
+    ],
+    "difficulty": "beginner",
+    "calories_per_min": 3,
+    "met": 2.3
+  },
+  "pilates": {
+    "type": "flexibility",
+    "muscle_groups": [
+      "core",
+      "full_body"
+    ],
+    "difficulty": "beginner",
+    "calories_per_min": 5,
+    "met": 3.0
+  },
+  "tai_chi": {
+    "type": "flexibility",
+    "muscle_groups": [
+      "full_body"
+    ],
+    "difficulty": "beginner",
+    "calories_per_min": 4,
+    "met": 3.0
+  }
+}

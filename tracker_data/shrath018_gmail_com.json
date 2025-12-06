@@ -1,0 +1,26 @@
+{
+  "2025-11-11": {
+    "steps": 400,
+    "water_ml": 1000,
+    "meals_completed": [
+      "breakfast",
+      "lunch",
+      "snacks"
+    ],
+    "exercises_completed": [
+      "Tuesday_running"
+    ],
+    "diet_replacements": {},
+    "notes": "",
+    "created_at": "2025-11-11T19:32:28.405572"
+  },
+  "2025-11-12": {
+    "steps": 0,
+    "water_ml": 0,
+    "meals_completed": [],
+    "exercises_completed": [],
+    "diet_replacements": {},
+    "notes": "",
+    "created_at": "2025-11-12T10:11:25.892311"
+  }
+}

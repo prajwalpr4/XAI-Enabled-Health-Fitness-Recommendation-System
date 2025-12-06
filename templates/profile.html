@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Health & Fitness XAI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 0;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: auto 1fr;
+        }
+        
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 30px 20px;
+            color: white;
+            border-right: 2px solid rgba(255, 255, 255, 0.2);
+            overflow-y: auto;
+            z-index: 1000;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar.open {
+            transform: translateX(0);
+        }
+        
+        .sidebar-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+            pointer-events: auto;
+            padding: 0;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .sidebar-toggle:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .sidebar-toggle:active {
+            transform: scale(0.95);
+        }
+        
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
+        }
+        
+        .sidebar-overlay.show {
+            display: block;
+        }
+        
+        .sidebar h2 {
+            font-size: 1.3em;
+            margin-bottom: 30px;
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .sidebar-nav a {
+            color: white;
+            text-decoration: none;
+            padding: 12px 15px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .sidebar-nav a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .sidebar-nav a.dashboard { background: rgba(72, 198, 239, 0.3); }
+        .sidebar-nav a.tracker { background: rgba(40, 167, 69, 0.3); }
+        .sidebar-nav a.recommendations { background: rgba(255, 193, 7, 0.3); }
+        .sidebar-nav a.profile { background: rgba(255, 255, 255, 0.1); }
+        .sidebar-nav a.logout { background: rgba(255, 68, 68, 0.2); }
+        
+        .sidebar-user {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .sidebar-user p {
+            margin: 0;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        .sidebar-user strong {
+            display: block;
+            font-size: 1.1em;
+            margin-top: 5px;
+        }
+        
+        .main-content {
+            grid-column: 1;
+            grid-row: 1 / -1;
+            padding: 20px;
+            overflow-y: auto;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin-left: 0;
+            transition: margin-left 0.3s ease;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #5568d3 0%, #6c3fa0 100%);
+            border-radius: 20px;
+            padding: 40px 45px;
+            margin-bottom: 20px;
+            box-shadow: 0 20px 60px rgba(86, 104, 211, 0.4);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 2.2em;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn:hover {
+            background: linear-gradient(135deg, #5568d3 0%, #6c3fa0 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e1e8ed;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 15px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-group input:disabled,
+        .form-group select:disabled {
+            background: #f8f9fa;
+            cursor: not-allowed;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .checkbox-group input {
+            margin-right: 8px;
+            width: auto;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .alert.show {
+            display: block;
+        }
+        
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .edit-mode {
+            display: none;
+        }
+        
+        .edit-mode.active {
+            display: block;
+        }
+        
+        .view-mode {
+            display: block;
+        }
+        
+        .view-mode.hidden {
+            display: none;
+        }
+        
+        .info-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .info-item label {
+            display: block;
+            color: #666;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+        }
+        
+        .info-item .value {
+            color: #333;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .badge.primary {
+            background: #cfe2ff;
+            color: #084298;
+        }
+        
+        .badge.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .no-profile {
+            text-align: center;
+            padding: 40px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            color: #666;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Toggle Button -->
+    <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+    
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+    
+    <!-- Sidebar Navigation -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-user">
+            <p>Welcome,</p>
+            <strong id="user-name">User</strong>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/dashboard" class="dashboard">📊 Dashboard</a>
+            <a href="/tracker" class="tracker">📝 Tracker</a>
+            <a href="/" class="recommendations">🏠 Recommendations</a>
+            <a href="/profile" class="profile">👤 Profile</a>
+            <a href="/logout" class="logout">🚪 Logout</a>
+        </nav>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <div class="header">
+                <h1>👤 My Profile</h1>
+            </div>
+        
+        <div id="alert" class="alert"></div>
+        
+        <div class="card">
+            <h2>Account Information</h2>
+            <div class="info-item">
+                <label>Email</label>
+                <div class="value">{{ user_email }}</div>
+            </div>
+            <div class="info-item">
+                <label>Name</label>
+                <div class="value">{{ user.name }}</div>
+            </div>
+            <div class="info-item">
+                <label>Member Since</label>
+                <div class="value">{{ user.created_at[:10] if user.created_at else 'N/A' }}</div>
+            </div>
+        </div>
+        
+        {% if user.profile %}
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0;">Health Profile</h2>
+                <button class="btn" id="edit-btn" onclick="toggleEdit()">Edit Profile</button>
+            </div>
+            
+            <!-- View Mode -->
+            <div id="view-mode" class="view-mode">
+                <div class="form-row">
+                    <div class="info-item">
+                        <label>Age</label>
+                        <div class="value" id="display-age">{{ user.profile.age }} years</div>
+                    </div>
+                    <div class="info-item">
+                        <label>Gender</label>
+                        <div class="value" id="display-gender">{{ user.profile.gender|capitalize }}</div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="info-item">
+                        <label>Weight</label>
+                        <div class="value" id="display-weight">{{ user.profile.weight }} kg</div>
+                    </div>
+                    <div class="info-item">
+                        <label>Height</label>
+                        <div class="value" id="display-height">{{ user.profile.height }} cm</div>
+                    </div>
+                </div>
+                
+                
+                <div class="info-item">
+                    <label>Activity Level</label>
+                    <div class="value" id="display-activity">{{ user.profile.activity_level.replace('_', ' ')|title }}</div>
+                </div>
+                
+                <div class="info-item">
+                    <label>Fitness Goals</label>
+                    <div class="value" id="display-goals">
+                        {% for goal in user.profile.fitness_goals %}
+                            <span class="badge primary">{{ goal.replace('_', ' ')|title }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                {% if user.profile.dietary_restrictions %}
+                <div class="info-item">
+                    <label>Dietary Restrictions</label>
+                    <div class="value" id="display-restrictions">
+                        {% for restriction in user.profile.dietary_restrictions %}
+                            <span class="badge success">{{ restriction.replace('_', ' ')|title }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Edit Mode -->
+            <div id="edit-mode" class="edit-mode">
+                <form id="profile-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="age">Age</label>
+                            <input type="number" id="age" name="age" value="{{ user.profile.age }}" min="15" max="100" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="gender">Gender</label>
+                            <select id="gender" name="gender" required>
+                                <option value="male" {% if user.profile.gender == 'male' %}selected{% endif %}>Male</option>
+                                <option value="female" {% if user.profile.gender == 'female' %}selected{% endif %}>Female</option>
+                                <option value="other" {% if user.profile.gender == 'other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="weight">Weight (kg)</label>
+                            <input type="number" id="weight" name="weight" value="{{ user.profile.weight }}" min="30" max="300" step="0.1" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="height">Height (cm)</label>
+                            <input type="number" id="height" name="height" value="{{ user.profile.height }}" min="100" max="250" step="0.1" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="activity_level">Activity Level</label>
+                        <select id="activity_level" name="activity_level" required>
+                            <option value="sedentary" {% if user.profile.activity_level == 'sedentary' %}selected{% endif %}>Sedentary (little or no exercise)</option>
+                            <option value="lightly_active" {% if user.profile.activity_level == 'lightly_active' %}selected{% endif %}>Lightly Active (1-3 days/week)</option>
+                            <option value="moderately_active" {% if user.profile.activity_level == 'moderately_active' %}selected{% endif %}>Moderately Active (3-5 days/week)</option>
+                            <option value="very_active" {% if user.profile.activity_level == 'very_active' %}selected{% endif %}>Very Active (6-7 days/week)</option>
+                            <option value="extra_active" {% if user.profile.activity_level == 'extra_active' %}selected{% endif %}>Extra Active (athlete/physical job)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Fitness Goals</label>
+                        <div class="checkbox-group">
+                            <label>
+                                <input type="checkbox" name="fitness_goals" value="weight_loss" {% if 'weight_loss' in user.profile.fitness_goals %}checked{% endif %}>
+                                Weight Loss
+                            </label>
+                            <label>
+                                <input type="checkbox" name="fitness_goals" value="muscle_gain" {% if 'muscle_gain' in user.profile.fitness_goals %}checked{% endif %}>
+                                Muscle Gain
+                            </label>
+                            <label>
+                                <input type="checkbox" name="fitness_goals" value="maintenance" {% if 'maintenance' in user.profile.fitness_goals %}checked{% endif %}>
+                                Maintenance
+                            </label>
+                            <label>
+                                <input type="checkbox" name="fitness_goals" value="endurance" {% if 'endurance' in user.profile.fitness_goals %}checked{% endif %}>
+                                Endurance
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Dietary Restrictions</label>
+                        <div class="checkbox-group">
+                            <label>
+                                <input type="checkbox" name="dietary_restrictions" value="vegetarian" {% if 'vegetarian' in user.profile.dietary_restrictions %}checked{% endif %}>
+                                Vegetarian
+                            </label>
+                            <label>
+                                <input type="checkbox" name="dietary_restrictions" value="vegan" {% if 'vegan' in user.profile.dietary_restrictions %}checked{% endif %}>
+                                Vegan
+                            </label>
+                            <label>
+                                <input type="checkbox" name="dietary_restrictions" value="gluten_free" {% if 'gluten_free' in user.profile.dietary_restrictions %}checked{% endif %}>
+                                Gluten Free
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button type="submit" class="btn">Save Changes</button>
+                        <button type="button" class="btn btn-secondary" onclick="cancelEdit()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        {% else %}
+        <div class="card">
+            <div class="no-profile">
+                <h3>No Health Profile Yet</h3>
+                <p>You haven't created a health profile yet.</p>
+                <p style="margin-top: 15px;">
+                    <a href="/" class="btn">Create Profile</a>
+                </p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <script>
+        // Sidebar toggle functions
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+        }
+        
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.remove('open');
+            overlay.classList.remove('show');
+        }
+        
+        // Close sidebar when clicking on a link
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarLinks = document.querySelectorAll('.sidebar-nav a');
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', closeSidebar);
+            });
+            
+            // Load user info to update sidebar
+            loadUserInfo();
+        });
+        
+        async function loadUserInfo() {
+            try {
+                const response = await fetch('/get_user_info');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        const userName = data.name || 'User';
+                        const sidebarUserName = document.getElementById('user-name');
+                        if (sidebarUserName) {
+                            sidebarUserName.textContent = userName;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading user info:', error);
+            }
+        }
+        
+        function toggleEdit() {
+            document.getElementById('view-mode').classList.add('hidden');
+            document.getElementById('edit-mode').classList.add('active');
+            document.getElementById('edit-btn').style.display = 'none';
+        }
+        
+        function cancelEdit() {
+            document.getElementById('view-mode').classList.remove('hidden');
+            document.getElementById('edit-mode').classList.remove('active');
+            document.getElementById('edit-btn').style.display = 'block';
+        }
+        
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.className = `alert ${type} show`;
+            alert.textContent = message;
+            
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 5000);
+        }
+        
+        document.getElementById('profile-form')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const updates = {
+                age: parseInt(formData.get('age')),
+                gender: formData.get('gender'),
+                weight: parseFloat(formData.get('weight')),
+                height: parseFloat(formData.get('height')),
+                activity_level: formData.get('activity_level'),
+                fitness_goals: formData.getAll('fitness_goals'),
+                dietary_restrictions: formData.getAll('dietary_restrictions')
+            };
+            
+            if (updates.fitness_goals.length === 0) {
+                showAlert('Please select at least one fitness goal', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/update_profile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updates)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert('Profile updated successfully!', 'success');
+                    
+                    // Update display values
+                    document.getElementById('display-age').textContent = updates.age + ' years';
+                    document.getElementById('display-gender').textContent = updates.gender.charAt(0).toUpperCase() + updates.gender.slice(1);
+                    document.getElementById('display-weight').textContent = updates.weight + ' kg';
+                    document.getElementById('display-height').textContent = updates.height + ' cm';
+                    document.getElementById('display-activity').textContent = updates.activity_level.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                    
+                    // Update goals
+                    const goalsHtml = updates.fitness_goals.map(goal => 
+                        `<span class="badge primary">${goal.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</span>`
+                    ).join('');
+                    document.getElementById('display-goals').innerHTML = goalsHtml;
+                    
+                    // Update restrictions
+                    if (updates.dietary_restrictions.length > 0) {
+                        const restrictionsHtml = updates.dietary_restrictions.map(restriction => 
+                            `<span class="badge success">${restriction.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</span>`
+                        ).join('');
+                        document.getElementById('display-restrictions').innerHTML = restrictionsHtml;
+                    }
+                    
+                    // Switch back to view mode
+                    setTimeout(() => {
+                        cancelEdit();
+                    }, 1500);
+                } else {
+                    showAlert(result.error || 'Update failed', 'error');
+                }
+            } catch (error) {
+                showAlert('An error occurred. Please try again.', 'error');
+            }
+        });
+    </script>
+        </div>
+    </div>
+</body>
+</html>
